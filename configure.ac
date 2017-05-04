@@ -80,7 +80,10 @@ fi
 ###Specify build with Altera OpenCL SDK
 AC_ARG_WITH([AOCL], AS_HELP_STRING([--with-AOCL],[path to Altera OpenCl SDK]),
 	[AOCL_ROOT=$withval],[AOCL_ROOT=])
-
+AC_ARG_WITH([AOCL_BOARD], AS_HELP_STRING([--with-AOCL-BOARD],[Altera OpenCL board]),
+  [AOCL_BOARD=$withval],[AOCL_BOARD=])
+AC_ARG_WITH([AOCL_BOARD_LIB], AS_HELP_STRING([--with-AOCL-BOARD-LIB],[Altera OpenCL board library]),
+  [AOCL_BOARD_LIB=$withval],[AOCL_BOARD_LIB=])
 
 AC_CHECK_HEADER([CL/cl.h], [HEADER_LINUX=1], [])
 AC_CHECK_HEADER([OpenCL/OpenCL.h], [HEADER_APPLE=1], [])
@@ -94,14 +97,14 @@ then
    		AC_DEFINE(__FPGA__, , [Use FPGA])
    		PAC_APPEND_FLAG([-I${AOCL_ROOT}/host/include],[CPPFLAGS])
    		PAC_APPEND_FLAG([-I${AOCL_ROOT}/host/include/CL],[CPPFLAGS])
-		PAC_APPEND_FLAG([-L${AOCL_ROOT}/board/bittware/linux64/lib],[LDFLAGS])
+		PAC_APPEND_FLAG([-L${AOCL_ROOT}/board/${AOCL_BOARD}/linux64/lib],[LDFLAGS])
 		PAC_APPEND_FLAG([-L${AOCL_ROOT}/host/linux64/lib],[LDFLAGS])
-		PAC_APPEND_FLAG([-Wl,-rpath=${AOCL_ROOT}/board/bittware/linux64/lib],[LDFLAGS])
+		PAC_APPEND_FLAG([-Wl,-rpath=${AOCL_ROOT}/board/${AOCL_BOARD}/linux64/lib],[LDFLAGS])
 		PAC_APPEND_FLAG([-Wl,-rpath=${AOCL_ROOT}/host/linux64/lib],[LDFLAGS])
 		PAC_APPEND_FLAG([-lalteracl],[LIBS])
 		PAC_APPEND_FLAG([-ldl],[LIBS])
 		PAC_APPEND_FLAG([-lacl_emulator_kernel_rt],[LIBS])
-		PAC_APPEND_FLAG([-laltera_s5phq_mmd],[LIBS])
+		PAC_APPEND_FLAG([-l${AOCL_BOARD_LIB}],[LIBS])
 		PAC_APPEND_FLAG([-lalterahalmmd],[LIBS])
 		PAC_APPEND_FLAG([-lelf],[LIBS])
 		PAC_APPEND_FLAG([-lrt],[LIBS])
@@ -119,7 +122,6 @@ else
         AC_MSG_ERROR([OpenCL header not found])
     fi
 fi
-
 
 ###AC_ARG_WITH([opts], AC_HELP_STRING([--with-opts],[path to Opts argument library]),
 ###	[OPTS_PREFIX=$withval],[OPTS_PREFIX=])
